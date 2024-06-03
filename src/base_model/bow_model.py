@@ -20,12 +20,12 @@ class ImageSearch:
             frames='/Users/willian/Documents/personal-projects/ComputerVisionProjects/src/search',
             features_directory='/Users/willian/Documents/personal-projects/ComputerVisionProjects/src/search_features'
         )
-        #time.sleep(3)
+        time.sleep(3)
         self._bag_visual_word_search()
-        #time.sleep(3)
+        time.sleep(3)
         results = self.search()
         print(results)
-        #time.sleep(3)
+        time.sleep(3)
         return self.get_images(results)
 
     def get_images(self, frames_to_pick: list[dict]):
@@ -272,5 +272,4 @@ class ImageSearch:
 if __name__ == "__main__":
     model = ImageSearch()
     model.process_search_images()
-    #model.process_search_images()
 
