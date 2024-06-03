@@ -5,7 +5,7 @@ import regex as re
 
 
 class ImageSearch:
-    def generate_scenes_descriptor(self):
+    def _generate_scenes_descriptor(self):
         scenes = '/Users/willian/Documents/personal-projects/ComputerVisionProjects/src/new_model/scenes'
         scenes_descriptors_path = '/Users/willian/Documents/personal-projects/ComputerVisionProjects/src/new_model/scenes_descriptors'
 
@@ -85,8 +85,12 @@ class ImageSearch:
         return matched_images
 
     def search(self):
+        base_path = os.path.dirname(__file__)
+        target_path = os.path.abspath(os.path.join(base_path, '..', '..', 'src', 'search', 'img.jpg'))
+        print(target_path)
         try:
-            closest_indices = self.matching('/Users/willian/Documents/personal-projects/ComputerVisionProjects/src/search/img.jpg')
+
+            closest_indices = self.matching(target_path)
             images = self.get_images(closest_indices)
             return images
         except Exception as ex:
