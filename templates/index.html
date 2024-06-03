@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Vision Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-links a {
+            margin-right: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        .poetry {
+            color: #999;
+            font-style: italic;
+            margin-top: 5px;
+            text-align: center;
+        }
+        .published {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        #image-container {
+            position: relative;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        #image-container img {
+            width: 100%;
+            height: auto;
+        }
+        #image-container2 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        #image-container2 img {
+            width: calc(50% - 5px);
+        }
+        #selected-area {
+            position: absolute;
+            border: 2px dashed red;
+            display: none;
+        }
+        #crop-button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .no-pointer-events {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span>willianrsouza</span>
+        <div class="header-links">
+            <a href="" target="_blank">LinkedIn</a>
+            <a href="" target="_blank">GitHub</a>
+            <a href="" target="_blank">Site</a>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Computer Vision: Object Movies Search</h1>
+        <p>Search Objects in Movies Scenes</p>
+        <hr>
+        <p class="description">
+            This demonstration aims to apply the concepts learned in the Analysis and Computer Vision course, taught at PUC Minas by Professor Henrique Batista da Silva.
+            My main objective is to develop an information retrieval solution based on visual content, seeking to identify objects present in movie scenes.
+            This project is inspired by the research and demonstrations offered by the University of Oxford.
+        </p>
+        <hr>
+        <p>Crop object in image using the mouse.</p>
+        <div id="image-container">
+            <img id="image" src="static/img.jpg" alt="cut scene">
+            <div id="selected-area"></div>
+        </div>
+        <button id="crop-button">Search</button>
+        <p>This object appear in:</p>
+        <div id="image-container2">
+            <img id="image1" src="static/image-1.jpg" alt="Image 1">
+            <img id="image2" src="static/image-2.jpg" alt="Image 2">
+        </div>
+        <p class="poetry">"Tudo que eu não invento é falso." - Manoel de Barros</p>
+        <p class="published"> Published - Jun 1, 2024</p>
+    </div>
+    <script>
+        const imageContainer = document.getElementById('image-container');
+        const selectedArea = document.getElementById('selected-area');
+        const image = document.getElementById('image');
+        const cropButton = document.getElementById('crop-button');
+
+        let isDragging = false;
+        let startX, startY, endX, endY;
+
+        imageContainer.addEventListener('mousedown', (e) => {
+            if (!isDragging) {
+                image.classList.add('no-pointer-events');
+            }
+            isDragging = true;
+            const { left, top } = image.getBoundingClientRect();
+            startX = e.clientX - left;
+            startY = e.clientY - top;
+        });
+
+        imageContainer.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const { left, top } = image.getBoundingClientRect();
+            endX = e.clientX - left;
+            endY = e.clientY - top;
+
+            const width = Math.abs(endX - startX);
+            const height = Math.abs(endY - startY);
+            const leftPos = Math.min(startX, endX);
+            const topPos = Math.min(startY, endY);
+
+            selectedArea.style.width = width + 'px';
+            selectedArea.style.height = height + 'px';
+            selectedArea.style.left = leftPos + 'px';
+            selectedArea.style.top = topPos + 'px';
+            selectedArea.style.display = 'block';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            image.classList.remove('no-pointer-events');
+        });
+
+        cropButton.addEventListener('click', () => {
+            cropAndSendImage();
+        });
+
+        function cropAndSendImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const width = Math.abs(endX - startX);
+            const height = Math.abs(endY - startY);
+            const x = Math.min(startX, endX);
+            const y = Math.min(startY, endY);
+
+            canvas.width = width;
+            canvas.height = height;
+
+            ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+
+                    fetch('/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ croppedImageData: base64data }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        updateImages();
+                    })
+                    .catch(error => console.error('Erro:', error));
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg');
+        }
+        function updateImages() {
+            fetch('/get_image_paths')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('image1').src = data.image_paths[0];
+                document.getElementById('image2').src = data.image_paths[1];
+            })
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+        const imageContainer2 = document.getElementById('image-container2');
+        const imagesInContainer2 = imageContainer2.getElementsByTagName('img');
+
+        for (let i = 0; i < imagesInContainer2.length; i++) {
+            imagesInContainer2[i].addEventListener('click', function() {
+                const clickedImageSrc = this.src;
+                image.src = clickedImageSrc;
+            });
+        }
+    </script>
+</body>
+</html>
