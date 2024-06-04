@@ -3,7 +3,7 @@ import base64
 from PIL import Image
 import io
 import shutil
-from src.new_model.modeltest import ImageSearch
+from src.model import ImageSearch
 
 app = Flask(__name__)
 
@@ -34,6 +34,7 @@ def get_image_paths():
 def update_images():
     model = ImageSearch()
     paths = model.search()
+    print('PATHS:', paths)
 
     if paths:
         while len(paths) < 2:

@@ -121,13 +121,13 @@
             This project is inspired by the research and demonstrations offered by the University of Oxford.
         </p>
         <hr>
-        <p>Crop object in image using the mouse.</p>
+        <p>crop an object in an image using the mouse</p>
         <div id="image-container">
             <img id="image" src="static/img.jpg" alt="cut scene">
             <div id="selected-area"></div>
         </div>
         <button id="crop-button">Search</button>
-        <p>This object appear in:</p>
+        <p>this object appears in frames</p>
         <div id="image-container2">
             <img id="image1" src="static/image-1.jpg" alt="Image 1">
             <img id="image2" src="static/image-2.jpg" alt="Image 2">
@@ -221,11 +221,9 @@
             fetch('/get_image_paths')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('image1').src = data.image_paths[0];
-                document.getElementById('image2').src = data.image_paths[1];
-            })
-            .then(data => {
-                location.reload();
+                const timestamp = new Date().getTime();
+                document.getElementById('image1').src = `${data.image_paths[0]}?t=${timestamp}`;
+                document.getElementById('image2').src = `${data.image_paths[1]}?t=${timestamp}`;
             })
             .catch(error => console.error('Erro:', error));
         }
